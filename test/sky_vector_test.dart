@@ -9,12 +9,13 @@ import 'dart:math';
 
 void main() async {
 
-  final SkyVector skyVector = new SkyVector();
+  List<String> countries = await SkyVector.countries();
 
-  List<String> countries = await skyVector.countries();
+  print('Countries:');
 
   for (var country in countries) {
 
+    print(country);
     test('adds one to input values', () {
     expect(country, isNot(''));
     });
@@ -23,10 +24,16 @@ void main() async {
 
   String selectedCountry = countries[new Random().nextInt(countries.length)];
 
+  //selectedCountry = 'Canada';
+
+  print('---------------------------------------');
   print('Seleced Random Country: $selectedCountry');
   print('---------------------------------------');
 
-  List<String> regions = await skyVector.regions(selectedCountry);
+  List<String> regions = await SkyVector.regions(selectedCountry);
+
+  print('Regions:');
+
 
   for (var region in regions) {
 
@@ -42,14 +49,16 @@ void main() async {
 
   print('---------------------------------------');
   print('Seleced Random Region: $selectedRegion');
+  print('---------------------------------------');
 
-  List<Element> airports = await skyVector.airports(selectedCountry, selectedRegion);
+  List<Element> airports = await SkyVector.airports(selectedCountry, selectedRegion);
+
+  print('Airports:');
 
   for (var airport in airports) {
 
     print(airport.getElementsByTagName('a').first.text);
 
-   //print(airport.getElementsByTagName('a').first.attributes['href']);
     test('adds one to input values', () {
       expect(airport.getElementsByTagName('a').first.text, isNot('About Us'));
       expect(airport.getElementsByTagName('a').first.text, isNot('Login'));
@@ -57,5 +66,29 @@ void main() async {
     });
 
   }
+
+  var randomAirport = airports[new Random().nextInt(airports.length)];
+
+  print('---------------------------------------');
+  print('Seleced Random Airport: ${randomAirport.getElementsByTagName('a').first.text}');
+  print('---------------------------------------');
+
+  List<String> airportSectionsList = await SkyVector.airportDetails(randomAirport.getElementsByTagName('a').first.attributes['href']);
+
+  print('Airport Sections:');
+
+  for (var airportSection in airportSectionsList) {
+
+    print(airportSection);
+
+  }
+
+  var selectedSection = airportSectionsList[new Random().nextInt(airportSectionsList.length)];
+
+  print('---------------------------------------');
+  print('Seleced Random Section: $selectedSection');
+  print('---------------------------------------');
+
+  var section = await SkyVector.airportSection(randomAirport.getElementsByTagName('a').first.attributes['href'], selectedSection);
 
 }

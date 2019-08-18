@@ -4,16 +4,9 @@ import 'package:http/http.dart';
 import 'package:html/parser.dart';
 import 'package:html/dom.dart';
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
-
 class SkyVector {
 
-
-  Future<List<String>> countries() async {
+  static Future<List<String>> countries() async {
     var client = Client();
     Response response = await client.get(
         'https://skyvector.com/airports'
@@ -35,7 +28,7 @@ class SkyVector {
 
   }
 
-  Future<List<String>> regions(String country) async {
+  static Future<List<String>> regions(String country) async {
 
     var client = Client();
     Response response = await client.get(
@@ -59,7 +52,7 @@ class SkyVector {
 
   }
 
-  Future<List<Element>> airports(String country,String region) async {
+  static Future<List<Element>> airports(String country,String region) async {
 
     var client = Client();
     Response response = await client.get(
@@ -80,6 +73,51 @@ class SkyVector {
 
 
     return airportElements;
+
+  }
+
+  static Future<List<String>> airportDetails(String airportURL) async {
+
+    var client = Client();
+    Response response = await client.get(
+        'https://skyvector.com$airportURL'
+    );
+
+
+    var document = parse(response.body);
+    List<Element> airportInfoElements = document.querySelectorAll('.aptdatatitle');
+
+    List<String> airportSections = List();
+    for(var airportDetails in airportInfoElements)
+    {
+      airportSections.add(airportDetails.text);
+    }
+
+    return airportSections;
+
+  }
+
+  static Future<Element> airportSection(String airportURL, String section) async {
+
+    var client = Client();
+    Response response = await client.get(
+        'https://skyvector.com$airportURL'
+    );
+
+    var document = parse(response.body);
+    List<Element> airportInfoElements = document.querySelectorAll('.aptdatatitle');
+
+    Element foundSection;
+
+    for(var airportInfoElement in airportInfoElements) {
+
+      if(airportInfoElement.text == section) {
+        foundSection = airportInfoElement;
+      }
+
+    }
+
+    return foundSection;
 
   }
 
